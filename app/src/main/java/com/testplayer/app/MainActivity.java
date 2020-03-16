@@ -1,6 +1,7 @@
 package com.testplayer.app;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -154,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
     @Override
     protected void onResume() {
         super.onResume();
-       ;
         if(playerPage.getVisibility() == View.VISIBLE) {
             initializePlayer(false, false);
         }
@@ -418,28 +419,28 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
         }, 500);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void hideSystemUI() {
-
         decorView.setSystemUiVisibility(View.GONE);
-       /* decorView.setSystemUiVisibility(
+        decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
-                       );*/
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
     }
 
     private void showSystemUI() {
-        decorView.setSystemUiVisibility(View.VISIBLE);
-       /*decorView.setSystemUiVisibility(
+       // decorView.setSystemUiVisibility(View.VISIBLE);
+       decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);*/
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+     //   getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+     //   getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
     }
 
