@@ -439,6 +439,7 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        this.recreate();
      //   getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
      //   getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
@@ -455,7 +456,11 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
 
         mediaSource = buildMediaSource(uri);
         initializePlayer(true, true);
-        hideSystemUI();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            hideSystemUI();
+        }else{
+
+        }
     }
 
     private void RestartPlayer(String path){
