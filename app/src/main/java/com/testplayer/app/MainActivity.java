@@ -6,11 +6,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -47,6 +49,7 @@ import com.google.android.exoplayer2.util.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
     private int currentStreamIndex,
             back_pressed_count;
     private RecyclerView streamsList;
-
+    private Context context;
     String [] ratios = {"4:3", "2:1", "1:1", "16:9",};
 
 
@@ -87,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        context = this;
         APP_NAME = getString(R.string.app_name);
 
         streamsPage = findViewById(R.id.list_page);
@@ -109,12 +112,13 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
         decorView = getWindow().getDecorView();
 
         streamsList =  findViewById(R.id.streams_list);
-
+        streamsList.setLayoutManager(new LinearLayoutManager(this));
 
 
 
         assetManager = getAssets();
-        try {
+
+       /* try {
             String [] contents =  assetManager.list("");
          //   Log.e(SUCCES_TAG, "count = " + contents.length);
             if(contents != null && contents.length > 0) {
@@ -134,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(ERROR_TAG, "error: " + e.getMessage());
-        }
+        }*/
     }
 
     @Override
@@ -144,17 +148,25 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
         streamsPage.setVisibility(View.VISIBLE);
         GetJsonFromServer();
 
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+       ;
         if(playerPage.getVisibility() == View.VISIBLE) {
             initializePlayer(false, false);
         }
         if (playerView != null) {
             playerView.onResume();
         }
+        if(streamsPage.getVisibility() == View.VISIBLE){
+            GetPlaylists();
+        }
+
+
+
     }
 
     @Override
@@ -210,7 +222,54 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
    }
 
 
-   public void GetJsonFromServer(){
+   @SuppressLint("StaticFieldLeak")
+   private void GetPlaylists(){
+       streamsPage.findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+       streamsPage.findViewById(R.id.empty_text).setVisibility(View.INVISIBLE);
+
+       new AsyncTask<Void, Void,  ArrayList<String>>() {
+
+           @Override
+           protected  ArrayList<String> doInBackground(Void... voids) {
+               ArrayList<String> streams = null;
+
+               try {
+                   String [] contents =  assetManager.list("");
+                   //   Log.e(SUCCES_TAG, "count = " + contents.length);
+                   if(contents != null && contents.length > 0) {
+                       streams = new ArrayList<String>();
+                       for (String content : contents){
+                           if(content.contains(".m3u8")){
+                               streams.add(content);
+                           }
+                       }
+
+                   }
+
+               } catch (IOException e) {
+                   e.printStackTrace();
+                   Log.e(ERROR_TAG, "error: " + e.getMessage());
+               }
+               return streams;
+           }
+
+           @Override
+           protected void onPostExecute( ArrayList<String> result) {
+               super.onPostExecute(result);
+               streamsPage.findViewById(R.id.progress_bar).setVisibility(View.INVISIBLE);
+               if(result != null && result.size() > 0){
+                   StreamsAdapter adapter = new StreamsAdapter(context,result);
+                   streamsList.setAdapter(adapter);
+               }else{
+                   streamsPage.findViewById(R.id.empty_text).setVisibility(View.VISIBLE);
+               }
+           }
+       }.execute();
+
+   }
+
+
+   private void GetJsonFromServer(){
        Retrofit retrofit = new Retrofit.Builder()
                .baseUrl( "http://info.limehd.tv/")
                .addConverterFactory(ScalarsConverterFactory.create())
@@ -270,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
                    public void run() {
                        back_pressed_count = 0;
                    }
-               }, 1000);
+               }, 2000);
            }
 
         }

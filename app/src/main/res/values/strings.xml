@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">TestPlayer</string>
-    <string name="list_title">Список каналов</string>
+    <string name="list_title">Список плейлистов</string>
     <string name="empty_json">Error: JSON is empty</string>
     <string name="exit_text">Нажмите еще раз для выхода</string>
+    <string name="no_playlist">Пусто</string>
+
 </resources>

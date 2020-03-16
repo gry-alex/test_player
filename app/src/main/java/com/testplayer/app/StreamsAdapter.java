@@ -10,13 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 public class StreamsAdapter extends RecyclerView.Adapter<StreamsAdapter.ViewHolder> {
     private Context context;
-    private  List<String> streams;
+    private ArrayList<String> streams;
 
-    public StreamsAdapter(Context context, List<String> streams){
+    public StreamsAdapter(Context context, ArrayList<String> streams){
         this.context = context;
         this.streams = streams;
     }
