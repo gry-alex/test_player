@@ -341,9 +341,10 @@ public class MainActivity extends AppCompatActivity implements Player.EventListe
         controller.findViewById(R.id.next_track).setEnabled(true);
         playerView.onPause();
         releasePlayer();
-        showSystemUI();
         playerPage.setVisibility(View.INVISIBLE);
         streamsPage.setVisibility(View.VISIBLE);
+        showSystemUI();
+
     }
 
     public void BackBtnPressed(View view){
